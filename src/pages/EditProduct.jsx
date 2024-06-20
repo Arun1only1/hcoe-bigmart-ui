@@ -1,5 +1,5 @@
-import { Formik } from "formik";
 import React from "react";
+import { Formik } from "formik";
 import productSchema from "../schemas/product.schema";
 import {
   Button,
@@ -8,20 +8,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-const AddProduct = () => {
+const EditProduct = () => {
   return (
     <div>
       <Header />
       <Formik
         initialValues={{
-          name: "",
-          brand: "",
-          price: 0,
-          quantity: 1,
-          description: "",
+          name: "A51",
+          brand: "Samsung",
+          price: 500,
+          quantity: 5,
+          description:
+            "Experience the sleek and powerful Samsung A30, designed to meet all your smartphone needs. Featuring a vibrant 6.4-inch Super AMOLED display, it delivers stunning visuals and an immersive viewing experience. Powered by an efficient Exynos 7904 processor and 4GB RAM, the A30 ensures smooth performance whether you're multitasking or gaming. Capture life's moments with the dual rear cameras, including a 16MP main sensor and a 5MP ultra-wide lens, while the 16MP front camera is perfect for selfies. The 4000mAh battery provides long-lasting power, and with 64GB of internal storage expandable via microSD, you'll never run out of space. The Samsung A30 also boasts a sleek design, fingerprint sensor, and facial recognition for enhanced security. Stay connected and enjoy the best of technology with the Samsung A30, a perfect blend of performance.",
         }}
         validationSchema={productSchema}
         onSubmit={(values) => {
@@ -44,7 +44,7 @@ const AddProduct = () => {
               }}
             >
               <Typography variant="h4" sx={{ color: "grey" }}>
-                Add product
+                Edit product
               </Typography>
 
               {/* name */}
@@ -103,7 +103,7 @@ const AddProduct = () => {
                 <TextField
                   label="Description"
                   multiline
-                  minRows={4}
+                  rows={7}
                   {...formik.getFieldProps("description")}
                 />
 
@@ -126,9 +126,8 @@ const AddProduct = () => {
           );
         }}
       </Formik>
-      <Footer />
     </div>
   );
 };
 
-export default AddProduct;
+export default EditProduct;
