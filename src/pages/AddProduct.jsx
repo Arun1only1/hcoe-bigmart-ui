@@ -1,20 +1,37 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import productSchema from "../schemas/product.schema";
 import {
   Button,
   FormControl,
   FormHelperText,
+  LinearProgress,
   TextField,
   Typography,
 } from "@mui/material";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import axiosInstance from "../lib/axios.instance";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const addProduct = async (values) => {
+    try {
+      setIsLoading(true);
+      await axiosInstance.post("/product/add", values);
+      setIsLoading(false);
+      navigate("/");
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error.response.data.message);
+    }
+  };
   return (
     <div>
       <Header />
+      {isLoading && <LinearProgress color="secondary" />}
       <Formik
         initialValues={{
           name: "",
@@ -25,7 +42,7 @@ const AddProduct = () => {
         }}
         validationSchema={productSchema}
         onSubmit={(values) => {
-          console.log(values);
+          addProduct(values);
         }}
       >
         {(formik) => {
@@ -103,7 +120,7 @@ const AddProduct = () => {
                 <TextField
                   label="Description"
                   multiline
-                  minRows={4}
+                  rows={7}
                   {...formik.getFieldProps("description")}
                 />
 

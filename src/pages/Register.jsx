@@ -1,19 +1,36 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import registerUserSchema from "../schemas/register.user.schema";
 import {
   Button,
   FormControl,
   FormHelperText,
+  LinearProgress,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../lib/axios.instance";
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const registerUser = async (values) => {
+    try {
+      setIsLoading(true);
+      const res = await axiosInstance.post("/user/register", values);
+
+      setIsLoading(false);
+      navigate("/login");
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error.response.data.message);
+    }
+  };
   return (
     <div>
+      {isLoading && <LinearProgress color="success" />}
       <Formik
         initialValues={{
           firstName: "",
@@ -23,7 +40,7 @@ const Register = () => {
         }}
         validationSchema={registerUserSchema}
         onSubmit={(values) => {
-          console.log(values);
+          registerUser(values);
         }}
       >
         {(formik) => {

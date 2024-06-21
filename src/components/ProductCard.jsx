@@ -1,6 +1,7 @@
 import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { fallBackImage } from "../constants/fallbackImage";
 
 const ProductCard = (props) => {
   const navigate = useNavigate();
@@ -20,12 +21,16 @@ const ProductCard = (props) => {
       }}
     >
       <img
-        src={props.image}
+        onClick={() => {
+          navigate(`/product-detail/${props?._id}`);
+        }}
+        src={props.image || fallBackImage}
         alt={props.name}
         style={{
           height: "200px",
           width: "200px",
-          objectFit: "cover",
+          cursor: "pointer",
+          // objectFit: "cover",
         }}
       />
 
@@ -40,13 +45,15 @@ const ProductCard = (props) => {
         <Typography>${props.price}</Typography>
       </Stack>
 
-      <Typography sx={{ textAlign: "justify" }}>{props.description}</Typography>
+      <Typography sx={{ textAlign: "justify" }}>
+        {props.description.substring(0, 200)}...
+      </Typography>
 
       <Button
         variant="contained"
         fullWidth
         onClick={() => {
-          navigate("/product-detail/1");
+          navigate(`/product-detail/${props?._id}`);
         }}
       >
         Explore

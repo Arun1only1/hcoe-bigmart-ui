@@ -1,11 +1,36 @@
-import { Box, Button, Stack } from "@mui/material";
-import React from "react";
+import { Box, Button, CircularProgress, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../lib/axios.instance";
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const getProductData = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axiosInstance.get("/product/list");
+        setIsLoading(false);
+        const products = res?.data?.productList;
+        setProducts(products);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error.response.data.message);
+      }
+    };
+
+    getProductData();
+  }, []);
+
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return <CircularProgress />;
+  }
   return (
     <Box
       sx={{
@@ -38,21 +63,20 @@ const Dashboard = () => {
           gap: "2rem",
         }}
       >
-        <ProductCard
-          name="Whey Protein"
-          brand="Nutralein"
-          price={200}
-          image="https://imgs.search.brave.com/uh5sZTxl_vfnwUq08bRICrPAA7EYyhapQDYhqu5n3qU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxZ3dtdTBVdGJM/LmpwZw"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident iure sint laboriosam mollitia nihil, officia perspiciatis, commodi voluptatibus cumque facere corrupti! Officia quod eum amet distinctio temporibus praesentium beatae nulla"
-        />
-
-        <ProductCard
-          name="Mouse"
-          brand="Logitech"
-          price={30}
-          image="https://imgs.search.brave.com/xx739Bk_nXjb9u6qXNxcXXKGBBYUxOsrNp04rBFBoGQ/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzF6dVR0YTdCaUwu/anBn"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident iure sint laboriosam mollitia nihil, officia perspiciatis, commodi voluptatibus cumque facere corrupti! Officia quod eum amet distinctio temporibus praesentium beatae nulla"
-        />
+        {products.map((item) => {
+          console.log(item);
+          return (
+            <ProductCard
+              key={item._id}
+              _id={item._id}
+              name={item.name}
+              brand={item.brand}
+              price={item.price}
+              image={item.image}
+              description={item.description}
+            />
+          );
+        })}
       </Stack>
     </Box>
   );

@@ -15,6 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import clearLocalStorage from "../lib/removeToken";
 
 const drawerWidth = 240;
 const navItems = [
@@ -54,7 +55,15 @@ const Header = (props) => {
           </ListItem>
         ))}
 
-        <Button>Logout</Button>
+        <Button
+          onClick={() => {
+            clearLocalStorage();
+            navigate("/login");
+          }}
+          sx={{ color: "#fff" }}
+        >
+          Logout
+        </Button>
       </List>
     </Box>
   );
@@ -96,7 +105,15 @@ const Header = (props) => {
               </Button>
             ))}
 
-            <Button sx={{ color: "#fff" }}>Logout</Button>
+            <Button
+              sx={{ color: "#fff" }}
+              onClick={() => {
+                clearLocalStorage();
+                navigate("/login");
+              }}
+            >
+              Logout
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>

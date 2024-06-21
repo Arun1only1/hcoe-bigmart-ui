@@ -1,13 +1,46 @@
-import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
-import React from "react";
+import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  Grid,
+  Stack,
+  Typography,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
+import axiosInstance from "../lib/axios.instance";
+import { useParams } from "react-router-dom";
+import { fallBackImage } from "../constants/fallbackImage";
+import DeleteProductDialog from "../components/DeleteProduct";
 
 const ProductDetail = () => {
+  const params = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [productDetail, setProductDetail] = useState({});
+  useEffect(() => {
+    const getProductDetail = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axiosInstance.get(`/product/detail/${params.id}`);
+        setProductDetail(res?.data?.productDetail);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error);
+      }
+    };
+
+    getProductDetail();
+  }, []);
+
+  if (isLoading) {
+    return <CircularProgress />;
+  }
   return (
     <Box
       sx={{
         padding: "2rem",
-
         boxShadow:
           "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
       }}
@@ -16,8 +49,8 @@ const ProductDetail = () => {
       <Grid container spacing={2} sx={{ gap: "3rem", flexDirection: "row" }}>
         <Grid item xs={4} sx={{}}>
           <img
-            src="https://imgs.search.brave.com/uh5sZTxl_vfnwUq08bRICrPAA7EYyhapQDYhqu5n3qU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxZ3dtdTBVdGJM/LmpwZw"
-            alt="Whey protein"
+            src={productDetail.image || fallBackImage}
+            alt={productDetail.name}
             style={{
               height: "500px",
               width: "500px",
@@ -33,34 +66,27 @@ const ProductDetail = () => {
             gap: "2rem",
           }}
         >
-          <Typography variant="h5">Whey Protein</Typography>
+          <Typography variant="h5">{productDetail.name}</Typography>
 
           <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography>Price: $200</Typography>
-            <Chip label="Nutralein" color="secondary" />
+            <Typography>Price: ${productDetail.price}</Typography>
+            <Chip label={productDetail.brand} color="secondary" />
           </Stack>
-          <Typography>Quantity: 10</Typography>
+          <Typography>Quantity: {productDetail.quantity}</Typography>
 
           <Typography sx={{ textAlign: "justify" }}>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis
-            nesciunt aperiam quod sapiente quos necessitatibus autem odio
-            veritatis nobis. Aspernatur sapiente corporis quos, ducimus placeat
-            repudiandae rem corrupti fugiat laudantium accusamus minima deleniti
-            consequatur iste? Molestiae nobis quae, molestias cumque quos ipsa
-            delectus nemo unde, ducimus obcaecati natus saepe. Maiores?
+            {productDetail.description}
           </Typography>
           <Stack direction="row" spacing={5}>
             <Button variant="contained" color="success">
               Edit
             </Button>
 
-            <Button variant="contained" color="error">
-              Delete
-            </Button>
+            <DeleteProductDialog />
           </Stack>
         </Grid>
       </Grid>
