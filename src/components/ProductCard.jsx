@@ -2,7 +2,7 @@ import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ProductCard = () => {
+const ProductCard = (props) => {
   const navigate = useNavigate();
   return (
     <Box
@@ -20,8 +20,8 @@ const ProductCard = () => {
       }}
     >
       <img
-        src="https://imgs.search.brave.com/uh5sZTxl_vfnwUq08bRICrPAA7EYyhapQDYhqu5n3qU/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMtbmEuc3NsLWlt/YWdlcy1hbWF6b24u/Y29tL2ltYWdlcy9J/LzcxZ3dtdTBVdGJM/LmpwZw"
-        alt="Whey protein"
+        src={props.image}
+        alt={props.name}
         style={{
           height: "200px",
           width: "200px",
@@ -35,17 +35,12 @@ const ProductCard = () => {
         alignItems="center"
         sx={{ width: "100%" }}
       >
-        <Typography variant="h6">Whey Protein</Typography>
-        <Chip label="Nutralein" color="secondary" />
-        <Typography>$200</Typography>
+        <Typography variant="h6">{props.name}</Typography>
+        <Chip label={props.brand} color="secondary" />
+        <Typography>${props.price}</Typography>
       </Stack>
 
-      <Typography sx={{ textAlign: "justify" }}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident iure
-        sint laboriosam mollitia nihil, officia perspiciatis, commodi
-        voluptatibus cumque facere corrupti! Officia quod eum amet distinctio
-        temporibus praesentium beatae nulla...
-      </Typography>
+      <Typography sx={{ textAlign: "justify" }}>{props.description}</Typography>
 
       <Button
         variant="contained"
