@@ -10,14 +10,17 @@ import {
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import axiosInstance from "../lib/axios.instance";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fallBackImage } from "../constants/fallbackImage";
 import DeleteProductDialog from "../components/DeleteProduct";
 
 const ProductDetail = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
   const [productDetail, setProductDetail] = useState({});
+
   useEffect(() => {
     const getProductDetail = async () => {
       try {
@@ -40,26 +43,47 @@ const ProductDetail = () => {
   return (
     <Box
       sx={{
+        mt: "5rem",
+        width: { xs: "100%", md: "70vw" },
+        gap: "2rem",
         padding: "2rem",
-        boxShadow:
-          "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
+        boxShadow: {
+          xs: null,
+          md: "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
+        },
       }}
     >
       <Header />
-      <Grid container spacing={2} sx={{ gap: "3rem", flexDirection: "row" }}>
-        <Grid item xs={4} sx={{}}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          gap: "2rem",
+        }}
+      >
+        <Stack
+          sx={{
+            minWidth: {
+              xs: "100%",
+              md: "50%",
+            },
+          }}
+        >
           <img
             src={productDetail.image || fallBackImage}
             alt={productDetail.name}
             style={{
-              height: "500px",
-              width: "500px",
+              height: "100%",
+              width: "100%",
             }}
           />
-        </Grid>
-        <Grid
+        </Stack>
+
+        <Stack
           item
-          xs={6}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -82,14 +106,20 @@ const ProductDetail = () => {
             {productDetail.description}
           </Typography>
           <Stack direction="row" spacing={5}>
-            <Button variant="contained" color="success">
-              Edit
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => {
+                navigate(`/edit-product/${params.id}`);
+              }}
+            >
+              edit product
             </Button>
 
             <DeleteProductDialog />
           </Stack>
-        </Grid>
-      </Grid>
+        </Stack>
+      </Box>
     </Box>
   );
 };

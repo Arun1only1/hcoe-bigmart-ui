@@ -13,23 +13,46 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import axiosInstance from "../lib/axios.instance";
 import { useNavigate } from "react-router-dom";
+import CustomSnackbar from "../components/CustomSnackbar";
 
 const AddProduct = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [snackar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
+
   const addProduct = async (values) => {
     try {
       setIsLoading(true);
-      await axiosInstance.post("/product/add", values);
+      const res = await axiosInstance.post("/product/add", values);
       setIsLoading(false);
-      navigate("/");
+      setSnackbar({
+        open: true,
+        message: res?.data?.message,
+        severity: "success",
+      });
+      // navigate("/");
     } catch (error) {
       setIsLoading(false);
-      console.log(error.response.data.message);
+      setSnackbar({
+        open: true,
+        message: error?.response?.data?.message || "Something went wrong",
+        severity: "error",
+      });
     }
   };
   return (
     <div>
+      <CustomSnackbar
+        open={snackar.open}
+        message={snackar.message}
+        severity={snackar.severity}
+        setSnackbar={setSnackbar}
+      />
       <Header />
       {isLoading && <LinearProgress color="secondary" />}
       <Formik

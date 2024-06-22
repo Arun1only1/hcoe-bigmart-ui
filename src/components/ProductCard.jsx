@@ -27,10 +27,10 @@ const ProductCard = (props) => {
         src={props.image || fallBackImage}
         alt={props.name}
         style={{
-          height: "200px",
-          width: "200px",
+          height: "400px",
+          width: "100%",
           cursor: "pointer",
-          // objectFit: "cover",
+          objectFit: "cover",
         }}
       />
 

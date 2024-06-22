@@ -1,31 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import productSchema from "../schemas/product.schema";
 import {
   Button,
+  CircularProgress,
   FormControl,
   FormHelperText,
+  LinearProgress,
   TextField,
   Typography,
 } from "@mui/material";
 import Header from "../components/Header";
+import axiosInstance from "../lib/axios.instance";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditProduct = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const [product, setProduct] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  useEffect(() => {
+    const getProductDetail = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get(`/product/detail/${params.id}`);
+
+        setLoading(false);
+        setProduct(res.data.productDetail);
+      } catch (error) {
+        setLoading(false);
+        console.log("error aayo");
+      }
+    };
+
+    getProductDetail();
+  }, []);
+
+  const editProduct = async (values) => {
+    try {
+      setEditLoading(true);
+      await axiosInstance.put(`/product/edit/${params.id}`, values);
+      navigate("/");
+      setEditLoading(false);
+    } catch (error) {
+      setEditLoading(false);
+      console.log("error happens");
+    }
+  };
+  if (loading) {
+    return <CircularProgress />;
+  }
   return (
     <div>
       <Header />
+      {editLoading && <LinearProgress />}
       <Formik
+        enableReinitialize
         initialValues={{
-          name: "A51",
-          brand: "Samsung",
-          price: 500,
-          quantity: 5,
-          description:
-            "Experience the sleek and powerful Samsung A30, designed to meet all your smartphone needs. Featuring a vibrant 6.4-inch Super AMOLED display, it delivers stunning visuals and an immersive viewing experience. Powered by an efficient Exynos 7904 processor and 4GB RAM, the A30 ensures smooth performance whether you're multitasking or gaming. Capture life's moments with the dual rear cameras, including a 16MP main sensor and a 5MP ultra-wide lens, while the 16MP front camera is perfect for selfies. The 4000mAh battery provides long-lasting power, and with 64GB of internal storage expandable via microSD, you'll never run out of space. The Samsung A30 also boasts a sleek design, fingerprint sensor, and facial recognition for enhanced security. Stay connected and enjoy the best of technology with the Samsung A30, a perfect blend of performance.",
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          quantity: product.quantity,
+          description: product.description,
         }}
         validationSchema={productSchema}
         onSubmit={(values) => {
-          console.log(values);
+          editProduct(values);
         }}
       >
         {(formik) => {
